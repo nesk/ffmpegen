@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, FC } from "react"
 import styled, { css } from "styled-components"
-import { useDragDropTracking } from "../../MouseMoveEvents"
+import { useMouseMoveEvent } from "../../MouseMoveEvents"
 
 enum Side {
   Start,
@@ -66,7 +66,7 @@ interface FrameHandleProps {
 }
 
 const FrameHandle: FC<FrameHandleProps> = ({ side, onDragging, onDropped }) => {
-  const onMouseDown = useDragDropTracking({
+  const onMouseDown = useMouseMoveEvent({
     onMove: ({ movementX }) => onDragging(movementX),
     onMoved: onDropped,
   })

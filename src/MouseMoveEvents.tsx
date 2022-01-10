@@ -21,7 +21,7 @@ type MouseDownEventHandler = React.MouseEventHandler
  *
  * @returns A event handler to bind to the `mousedown` event of the component you want to track.
  */
-export const useDragDropTracking = ({ onMove, onMoved }: MouseMoveEventHandlers): MouseDownEventHandler => {
+export const useMouseMoveEvent = ({ onMove, onMoved }: MouseMoveEventHandlers): MouseDownEventHandler => {
   const [isMoving, setIsMoving] = useState(false)
 
   /*
@@ -31,7 +31,7 @@ export const useDragDropTracking = ({ onMove, onMoved }: MouseMoveEventHandlers)
   // Local event handler, applied on the element.
   const onMouseDown = (event: React.MouseEvent) => {
     if (isMoving) {
-      console.debug("[useDragDropTracking] Mouse down event ignored, already moving.")
+      console.debug("[useMouseMoveEvent] Mouse down event ignored, already moving.")
       return
     }
 

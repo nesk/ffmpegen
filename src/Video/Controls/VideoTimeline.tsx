@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect, FC } from "react"
 import styled from "styled-components"
-import { useDragDropTracking } from "../../MouseMoveEvents"
+import { useMouseMoveEvent } from "../../MouseMoveEvents"
 
 export interface VideoProgressProps {
   readonly currentTime: number
@@ -76,7 +76,7 @@ export const VideoTimeline: FC<VideoTimelineProps> = ({ currentTime, duration, o
     }
   }, [currentTime]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const onMouseDown = useDragDropTracking({
+  const onMouseDown = useMouseMoveEvent({
     onMove: ({ clientX }) => {
       const selectedTime = computeCurrentTime(elementRef.current, clientX, duration)
       setSelectedTime(selectedTime)
