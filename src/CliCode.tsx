@@ -38,5 +38,7 @@ const formatSecondsToFfmpegTime = (seconds: number) => {
 
   const s = Math.round(seconds).toString().padStart(2, "0")
 
-  return `${h}:${m}:${s}`
+  const ms = Math.round((seconds - Math.floor(seconds)) * 1000)
+
+  return `${h}:${m}:${s}.${ms}`
 }
