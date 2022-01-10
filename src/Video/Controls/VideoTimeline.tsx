@@ -9,7 +9,7 @@ export interface VideoProgressProps {
 
 export const VideoProgress = styled.div`
   width: 100%;
-  height: 25px;
+  height: 100%;
   overflow: hidden;
   user-select: none;
 `

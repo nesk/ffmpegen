@@ -5,6 +5,8 @@ import { onPartialCurrentRef } from "./Ref"
 import { Video } from "./Video/Video"
 import { VideoCutter } from "./Video/Controls/VideoCutter"
 import { VideoTimeline } from "./Video/Controls/VideoTimeline"
+import { VideoPlayButton } from "./Video/Controls/VideoPlayButton"
+import { VideoControls } from "./Video/Controls/VideoControls"
 
 const Input = styled.input`
   display: block;
@@ -58,30 +60,31 @@ export const App: FC = () => {
         }}
       />
 
-      <div
-        onClick={() => {
-          onVideoRef(video => (video.isPaused ? video.play() : video.pause()))
-        }}
-      >
-        <Video
-          ref={videoRef}
-          src={fileUrl}
-          minTime={minTime}
-          maxTime={maxTime}
-          onLoaded={() => {}}
-          onDuration={setDuration}
-          onTime={setCurrentTime}
-        />
-      </div>
+      <Video
+        ref={videoRef}
+        src={fileUrl}
+        minTime={minTime}
+        maxTime={maxTime}
+        onLoaded={() => {}}
+        onDuration={setDuration}
+        onTime={setCurrentTime}
+      />
 
       <p style={{ margin: "30px 0", columnCount: 2 }}>
         Current time: <strong>{currentTime}</strong> <br />
         Duration: <strong>{duration}</strong> <br />
       </p>
 
-      <VideoCutter duration={duration} onMinTime={setMinTime} onMaxTime={setMaxTime}>
-        <VideoTimeline duration={duration} currentTime={currentTime} onSeeking={onSeeking} onSeeked={onSeeked} />
-      </VideoCutter>
+      <VideoControls>
+        <VideoPlayButton
+          isPaused={onVideoRef(({ isPaused }) => isPaused) ?? true}
+          onPlay={() => onVideoRef(video => video.play())}
+          onPause={() => onVideoRef(video => video.pause())}
+        />
+        <VideoCutter duration={duration} onMinTime={setMinTime} onMaxTime={setMaxTime}>
+          <VideoTimeline duration={duration} currentTime={currentTime} onSeeking={onSeeking} onSeeked={onSeeked} />
+        </VideoCutter>
+      </VideoControls>
 
       <CliCode file={onInputRef(input => input.files?.item(0) ?? undefined)} startTime={minTime} endTime={maxTime} />
     </>

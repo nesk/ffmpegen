@@ -12,6 +12,7 @@ const Container = styled.div`
   padding: 3px 18px;
   background: #565656;
   overflow: hidden;
+  grid-area: progress;
 `
 
 interface FrameProps {
