@@ -48,6 +48,7 @@ export const App: FC = () => {
       <Input
         ref={inputRef}
         type="file"
+        accept="video/*"
         onChange={() => {
           onInputRef(({ files }) => {
             if (files !== null && files.length > 0) {
