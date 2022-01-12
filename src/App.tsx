@@ -79,7 +79,14 @@ export const App: FC = () => {
       <VideoControls>
         <VideoPlayButton isPaused={isPaused} onPlay={() => setIsPaused(false)} onPause={() => setIsPaused(true)} />
         <VideoCutter duration={duration} onMinTime={onMinMaxTime(setMinTime)} onMaxTime={onMinMaxTime(setMaxTime)}>
-          <VideoTimeline duration={duration} currentTime={currentTime} onSeeking={onSeeking} onSeeked={onSeeked} />
+          <VideoTimeline
+            duration={duration}
+            currentTime={currentTime}
+            minTime={minTime}
+            maxTime={maxTime}
+            onSeeking={onSeeking}
+            onSeeked={onSeeked}
+          />
         </VideoCutter>
       </VideoControls>
 

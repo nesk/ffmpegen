@@ -56,11 +56,20 @@ const computeCurrentTime = (element: HTMLElement | null, pageX: number, duration
 }
 
 export interface VideoTimelineProps extends VideoProgressProps {
-  readonly onSeeking: (currentTime: number) => void
-  readonly onSeeked: () => void
+  readonly minTime: number
+  readonly maxTime: number
+  onSeeking(currentTime: number): void
+  onSeeked(): void
 }
 
-export const VideoTimeline: FC<VideoTimelineProps> = ({ currentTime, duration, onSeeking, onSeeked }) => {
+export const VideoTimeline: FC<VideoTimelineProps> = ({
+  currentTime,
+  minTime,
+  maxTime,
+  duration,
+  onSeeking,
+  onSeeked,
+}) => {
   const elementRef = useRef<HTMLDivElement>(null)
 
   const [isSeeking, setIsSeeking] = useState(false)
@@ -78,7 +87,8 @@ export const VideoTimeline: FC<VideoTimelineProps> = ({ currentTime, duration, o
 
   const onMouseDown = useMouseMoveEvent({
     onMove: ({ clientX }) => {
-      const selectedTime = computeCurrentTime(elementRef.current, clientX, duration)
+      let selectedTime = computeCurrentTime(elementRef.current, clientX, duration)
+      selectedTime = Math.min(maxTime, Math.max(minTime, selectedTime))
       setSelectedTime(selectedTime)
       setIsSeeking(true)
       onSeeking(selectedTime)
