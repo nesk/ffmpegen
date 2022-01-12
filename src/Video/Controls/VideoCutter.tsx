@@ -116,12 +116,12 @@ export const VideoCutter: FC<VideoCutterProps> = ({ duration, children, onMinTim
   }
 
   useEffect(() => {
-    onMinTime(convertOffsetToTime(containerRef.current, frameRef.current, Side.Start, duration, startOffset))
-  }, [startOffset, duration, onMinTime])
+    onMaxTime(convertOffsetToTime(containerRef.current, frameRef.current, Side.End, duration, endOffset))
+  }, [endOffset, duration]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    onMaxTime(convertOffsetToTime(containerRef.current, frameRef.current, Side.End, duration, endOffset))
-  }, [endOffset, duration, onMaxTime])
+    onMinTime(convertOffsetToTime(containerRef.current, frameRef.current, Side.Start, duration, startOffset))
+  }, [startOffset, duration]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container ref={containerRef}>

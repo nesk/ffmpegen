@@ -22,6 +22,14 @@ export const App: FC = () => {
   const [duration, setDuration] = useState(0)
   const [wasPausedBeforeSeek, setWasPausedBeforeSeek] = useState<boolean | null>(null)
 
+  const onMinMaxTime = (setState: React.Dispatch<React.SetStateAction<number>>) => {
+    return (timeLimit: number) => {
+      setState(timeLimit)
+      setCurrentTime(timeLimit)
+      setIsPaused(true)
+    }
+  }
+
   const onSeeking = (currentTime: number) => {
     if (wasPausedBeforeSeek === null) {
       setWasPausedBeforeSeek(isPaused)
@@ -70,7 +78,7 @@ export const App: FC = () => {
 
       <VideoControls>
         <VideoPlayButton isPaused={isPaused} onPlay={() => setIsPaused(false)} onPause={() => setIsPaused(true)} />
-        <VideoCutter duration={duration} onMinTime={setMinTime} onMaxTime={setMaxTime}>
+        <VideoCutter duration={duration} onMinTime={onMinMaxTime(setMinTime)} onMaxTime={onMinMaxTime(setMaxTime)}>
           <VideoTimeline duration={duration} currentTime={currentTime} onSeeking={onSeeking} onSeeked={onSeeked} />
         </VideoCutter>
       </VideoControls>
