@@ -14,11 +14,10 @@ const Input = styled.input`
 `
 
 export const App: FC = () => {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const onInputRef = onPartialCurrentRef(inputRef)
   const videoRef = useRef<Video>(null)
   const onVideoRef = onPartialCurrentRef(videoRef)
 
+  const [file, setFile] = useState<File | undefined>()
   const [fileUrl, setFileUrl] = useState<string>()
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
@@ -48,15 +47,14 @@ export const App: FC = () => {
   return (
     <>
       <Input
-        ref={inputRef}
         type="file"
         accept="video/*"
-        onChange={() => {
-          onInputRef(({ files }) => {
-            if (files !== null && files.length > 0) {
-              setFileUrl(URL.createObjectURL(files[0]))
-            }
-          })
+        onChange={event => {
+          const { files } = event.target
+          if (files !== null && files.length > 0) {
+            setFile(files[0])
+            setFileUrl(URL.createObjectURL(files[0]))
+          }
         }}
       />
 
@@ -86,7 +84,7 @@ export const App: FC = () => {
         </VideoCutter>
       </VideoControls>
 
-      <CliCode file={onInputRef(input => input.files?.item(0) ?? undefined)} startTime={minTime} endTime={maxTime} />
+      <CliCode file={file} startTime={minTime} endTime={maxTime} />
     </>
   )
 }
