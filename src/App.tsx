@@ -1,7 +1,6 @@
-import { FC, useRef, useState } from "react"
+import { FC, useState } from "react"
 import styled from "styled-components"
 import { CliCode } from "./CliCode"
-import { onPartialCurrentRef } from "./Ref"
 import { Video } from "./Video/Video"
 import { VideoCutter } from "./Video/Controls/VideoCutter"
 import { VideoTimeline } from "./Video/Controls/VideoTimeline"
@@ -14,34 +13,28 @@ const Input = styled.input`
 `
 
 export const App: FC = () => {
-  const videoRef = useRef<Video>(null)
-  const onVideoRef = onPartialCurrentRef(videoRef)
-
   const [file, setFile] = useState<File | undefined>()
   const [fileUrl, setFileUrl] = useState<string>()
+  const [isPaused, setIsPaused] = useState(true)
   const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
   const [minTime, setMinTime] = useState(0)
   const [maxTime, setMaxTime] = useState(Infinity)
+  const [duration, setDuration] = useState(0)
   const [wasPausedBeforeSeek, setWasPausedBeforeSeek] = useState<boolean | null>(null)
 
   const onSeeking = (currentTime: number) => {
-    onVideoRef(video => {
-      if (wasPausedBeforeSeek === null) {
-        setWasPausedBeforeSeek(video.isPaused)
-      }
-      video.pause()
-      video.seek(currentTime)
-    })
+    if (wasPausedBeforeSeek === null) {
+      setWasPausedBeforeSeek(isPaused)
+    }
+    setIsPaused(true)
+    setCurrentTime(currentTime)
   }
 
   const onSeeked = () => {
-    onVideoRef(video => {
-      if (!wasPausedBeforeSeek) {
-        video.play()
-      }
-      setWasPausedBeforeSeek(null)
-    })
+    if (!wasPausedBeforeSeek) {
+      setIsPaused(false)
+    }
+    setWasPausedBeforeSeek(null)
   }
 
   return (
@@ -59,13 +52,15 @@ export const App: FC = () => {
       />
 
       <Video
-        ref={videoRef}
         src={fileUrl}
+        isPaused={isPaused}
+        currentTime={currentTime}
         minTime={minTime}
         maxTime={maxTime}
         onLoaded={() => {}}
-        onDuration={setDuration}
-        onTime={setCurrentTime}
+        onDurationChange={setDuration}
+        onTimeChange={setCurrentTime}
+        onPauseChange={setIsPaused}
       />
 
       <p style={{ margin: "30px 0", columnCount: 2 }}>
@@ -74,11 +69,7 @@ export const App: FC = () => {
       </p>
 
       <VideoControls>
-        <VideoPlayButton
-          isPaused={onVideoRef(({ isPaused }) => isPaused) ?? true}
-          onPlay={() => onVideoRef(video => video.play())}
-          onPause={() => onVideoRef(video => video.pause())}
-        />
+        <VideoPlayButton isPaused={isPaused} onPlay={() => setIsPaused(false)} onPause={() => setIsPaused(true)} />
         <VideoCutter duration={duration} onMinTime={setMinTime} onMaxTime={setMaxTime}>
           <VideoTimeline duration={duration} currentTime={currentTime} onSeeking={onSeeking} onSeeked={onSeeked} />
         </VideoCutter>
