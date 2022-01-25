@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, FC } from "react"
 import styled, { css } from "styled-components"
 import { useMouseMoveEvent } from "../../MouseMoveEvents"
+import { ReactComponent as ChevronLeft } from "../../assets/chevron-left.svg"
 
 enum Side {
   Start,
@@ -29,14 +30,17 @@ const Frame = styled.div.attrs<FrameProps>(({ startOffset, endOffset }) => ({
   position: absolute;
   top: 0;
   height: 100%;
-  border: 3px solid #ffcc01;
+  border: 3px solid ${props => (props.startOffset !== 0 || props.endOffset !== 0 ? "#ffcc01" : "transparent")};
   border-left-width: 18px;
   border-right-width: 18px;
   pointer-events: none;
+  border-radius: 6px;
+  box-shadow: 0 0 0 2000px rgba(86, 86, 86, 0.5), 0 0 0 1px #000 inset;
 `
 
 interface StyledFrameHandleProps {
   readonly side: Side
+  readonly isActive: boolean
 }
 
 const StyledFrameHandle = styled.div<StyledFrameHandleProps>`
@@ -46,6 +50,9 @@ const StyledFrameHandle = styled.div<StyledFrameHandleProps>`
   height: 100%;
   pointer-events: auto;
   user-select: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
   ${({ side }) =>
     side === Side.Start
@@ -57,20 +64,32 @@ const StyledFrameHandle = styled.div<StyledFrameHandleProps>`
           right: 0;
           transform: translateX(100%);
         `}
+
+  svg {
+    color: ${props => (props.isActive ? "#000" : "#fff")};
+    height: 60%;
+    transform: //translateX(${props => (props.side === Side.Start ? -1 : 1)}px)
+      rotateZ(${props => (props.side === Side.Start ? 0 : 180)}deg);
+  }
 `
 
 interface FrameHandleProps {
   readonly side: Side
+  readonly isActive: boolean
   onDragging(movementX: number): void
   onDropped(): void
 }
 
-const FrameHandle: FC<FrameHandleProps> = ({ side, onDragging, onDropped }) => {
+const FrameHandle: FC<FrameHandleProps> = ({ side, isActive, onDragging, onDropped }) => {
   const onMouseDown = useMouseMoveEvent({
     onMove: ({ movementX }) => onDragging(movementX),
     onMoved: onDropped,
   })
-  return <StyledFrameHandle side={side} onMouseDown={onMouseDown} />
+  return (
+    <StyledFrameHandle side={side} isActive={isActive} onMouseDown={onMouseDown}>
+      <ChevronLeft />
+    </StyledFrameHandle>
+  )
 }
 
 export interface VideoCutterProps {
@@ -123,16 +142,20 @@ export const VideoCutter: FC<VideoCutterProps> = ({ duration, children, onMinTim
     onMinTime(convertOffsetToTime(containerRef.current, frameRef.current, Side.Start, duration, startOffset))
   }, [startOffset, duration]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const isActive = startOffset.visual + endOffset.visual > 0
+
   return (
     <Container ref={containerRef}>
       <Frame ref={frameRef} startOffset={startOffset.visual} endOffset={endOffset.visual}>
         <FrameHandle
           side={Side.Start}
+          isActive={isActive}
           onDragging={setStartOffsetWithMovement}
           onDropped={generateRawOffsetResetter(setStartOffset)}
         />
         <FrameHandle
           side={Side.End}
+          isActive={isActive}
           onDragging={setEndOffsetWithMovement}
           onDropped={generateRawOffsetResetter(setEndOffset)}
         />

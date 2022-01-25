@@ -10,12 +10,12 @@ export interface VideoProgressProps {
 export const VideoProgress = styled.div`
   width: 100%;
   height: 100%;
-  overflow: hidden;
   user-select: none;
+  box-shadow: 0 0 0 1px #000 inset;
 `
 
 export const InnerVideoProgress = styled.div.attrs<VideoProgressProps>(({ currentTime, duration }) => ({
-  style: { width: `${(currentTime / duration) * 100}%` },
+  style: { left: `${(currentTime / duration) * 100}%` },
 }))<VideoProgressProps>`
   position: relative;
   width: 0;
@@ -23,10 +23,12 @@ export const InnerVideoProgress = styled.div.attrs<VideoProgressProps>(({ curren
 
   &::after {
     position: absolute;
-    top: 0;
-    right: -2px;
-    width: 4px;
-    height: 100%;
+    top: -1px;
+    right: 0;
+    bottom: -1px;
+    transform: translateX(50%);
+    border-radius: 99px;
+    width: 3px;
     background: #fff;
     content: "";
   }

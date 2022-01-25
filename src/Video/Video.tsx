@@ -4,7 +4,7 @@ import styled from "styled-components"
 const StyledVideo = styled.video`
   display: block;
   width: 100%;
-  background: grey;
+  background: #565656;
 `
 
 interface VideoProps {

@@ -17,7 +17,7 @@ const StyledPlayButton = styled.button`
   appearance: none;
 
   svg {
-    height: 60%;
+    height: 70%;
   }
 `
 
@@ -39,5 +39,9 @@ export const VideoPlayButton: FC<VideoPlayButtonProps> = ({ onPlay, onPause, ...
     setIsPaused(!isPaused)
   }
 
-  return <StyledPlayButton onClick={handleClick}>{isPaused ? <Play /> : <Pause />}</StyledPlayButton>
+  return (
+    <StyledPlayButton onClick={handleClick}>
+      {isPaused ? <Play style={{ transform: "translateX(1px)" }} /> : <Pause />}
+    </StyledPlayButton>
+  )
 }
