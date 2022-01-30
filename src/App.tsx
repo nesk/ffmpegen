@@ -71,12 +71,7 @@ export const App: FC = () => {
         onPauseChange={setIsPaused}
       />
 
-      <p style={{ margin: "30px 0", columnCount: 2 }}>
-        Current time: <strong>{currentTime}</strong> <br />
-        Duration: <strong>{duration}</strong> <br />
-      </p>
-
-      <VideoControls>
+      <VideoControls style={{ marginTop: "30px" }}>
         <VideoPlayButton isPaused={isPaused} onPlay={() => setIsPaused(false)} onPause={() => setIsPaused(true)} />
         <VideoCutter duration={duration} onMinTime={onMinMaxTime(setMinTime)} onMaxTime={onMinMaxTime(setMaxTime)}>
           <VideoTimeline

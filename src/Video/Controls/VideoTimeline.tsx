@@ -1,38 +1,80 @@
 import { useRef, useState, useEffect, FC } from "react"
+import { createPortal } from "react-dom"
 import styled from "styled-components"
+import { formatSecondsToFfmpegTime } from "../../helpers"
 import { useMouseMoveEvent } from "../../MouseMoveEvents"
 
-export interface VideoProgressProps {
-  readonly currentTime: number
-  readonly duration: number
-}
-
-export const VideoProgress = styled.div`
+const VideoProgress = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   user-select: none;
   box-shadow: 0 0 0 1px #000 inset;
 `
 
-export const InnerVideoProgress = styled.div.attrs<VideoProgressProps>(({ currentTime, duration }) => ({
-  style: { left: `${(currentTime / duration) * 100}%` },
-}))<VideoProgressProps>`
-  position: relative;
-  width: 0;
-  height: 100%;
+interface VideoProgressCursorProps {
+  readonly isSeeking: boolean
+  readonly currentTime: number
+  readonly duration: number
+}
 
-  &::after {
-    position: absolute;
-    top: -1px;
-    right: 0;
-    bottom: -1px;
-    transform: translateX(50%);
-    border-radius: 99px;
-    width: 3px;
-    background: #fff;
-    content: "";
-  }
+const StyledVideoProgressCursor = styled.div.attrs<VideoProgressCursorProps>(({ currentTime, duration }) => ({
+  style: {
+    left: `${(currentTime / duration) * 100}%`,
+    transform: `translateX(-${(currentTime / duration) * 100}%)`,
+  },
+}))<VideoProgressCursorProps>`
+  position: absolute;
+  top: -1.5px;
+  bottom: -1.5px;
+  border-radius: 99px;
+  width: 3px;
+  background: #fff;
+  z-index: 2;
 `
+
+const VideoProgressTooltip = styled.div<VideoProgressCursorProps>`
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 10px));
+  border-radius: 6px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  opacity: ${({ isSeeking }) => (isSeeking ? 1 : 0)};
+  pointer-events: none;
+`
+
+const VideoProgressCursor: FC<VideoProgressCursorProps> = props => {
+  const tooltipRoot = document.querySelector("#tooltip-root")
+  const cursorRef = useRef<HTMLDivElement>(null)
+  const [x, setX] = useState(0)
+  const [y, setY] = useState(0)
+  useEffect(() => {
+    const handleMouseEvent = () => {
+      const cursor = cursorRef.current
+      if (cursor) {
+        const { x, y } = cursor.getBoundingClientRect()
+        setX(x)
+        setY(y)
+      }
+    }
+    document.addEventListener("mousedown", handleMouseEvent)
+    document.addEventListener("mousemove", handleMouseEvent)
+    return () => {
+      document.removeEventListener("mousedown", handleMouseEvent)
+      document.removeEventListener("mousemove", handleMouseEvent)
+    }
+  })
+  return (
+    <>
+      <StyledVideoProgressCursor ref={cursorRef} {...props}>
+        {null}
+      </StyledVideoProgressCursor>
+      {tooltipRoot && createPortal(<VideoProgressTooltip style={{ left: x, top: y }} {...props} />, tooltipRoot)}
+    </>
+  )
+}
 
 /**
  * Computes the current time based on the position of the cursor.
@@ -57,7 +99,9 @@ const computeCurrentTime = (element: HTMLElement | null, pageX: number, duration
   return (duration * boundedClientX) / element.clientWidth
 }
 
-export interface VideoTimelineProps extends VideoProgressProps {
+export interface VideoTimelineProps {
+  readonly currentTime: number
+  readonly duration: number
   readonly minTime: number
   readonly maxTime: number
   onSeeking(currentTime: number): void
@@ -103,7 +147,9 @@ export const VideoTimeline: FC<VideoTimelineProps> = ({
 
   return (
     <VideoProgress ref={elementRef} onMouseDown={onMouseDown}>
-      <InnerVideoProgress currentTime={finalTime} duration={duration} />
+      <VideoProgressCursor isSeeking={isSeeking} currentTime={finalTime} duration={duration}>
+        {formatSecondsToFfmpegTime(finalTime)}
+      </VideoProgressCursor>
     </VideoProgress>
   )
 }

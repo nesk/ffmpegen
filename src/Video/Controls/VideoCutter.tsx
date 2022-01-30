@@ -10,7 +10,7 @@ enum Side {
 
 const Container = styled.div`
   position: relative;
-  padding: 3px 18px;
+  padding: 2px 18px;
   background: #565656;
   overflow: hidden;
   grid-area: progress;
@@ -29,8 +29,9 @@ const Frame = styled.div.attrs<FrameProps>(({ startOffset, endOffset }) => ({
 }))<FrameProps>`
   position: absolute;
   top: 0;
+  z-index: 1;
   height: 100%;
-  border: 3px solid ${props => (props.startOffset !== 0 || props.endOffset !== 0 ? "#ffcc01" : "transparent")};
+  border: 2px solid ${props => (props.startOffset !== 0 || props.endOffset !== 0 ? "#ffcc01" : "transparent")};
   border-left-width: 18px;
   border-right-width: 18px;
   pointer-events: none;
