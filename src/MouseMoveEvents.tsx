@@ -60,7 +60,7 @@ export const useMouseMoveEvent = ({ onMove, onMoved }: MouseMoveEventHandlers): 
   }
 
   /*
-    Register event handlers
+    Register global event handlers
   */
 
   useEffect(() => {
