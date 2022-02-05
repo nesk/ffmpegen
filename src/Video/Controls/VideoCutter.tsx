@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, FC } from "react"
 import styled, { css } from "styled-components"
 import { useMouseMoveEvent } from "../../MouseMoveEvents"
-import { ReactComponent as ChevronLeft } from "../../assets/chevron-left.svg"
+import { ReactComponent as ChevronLeftIcon } from "../../assets/chevron-left.svg"
 
 enum Side {
   Start,
@@ -88,7 +88,7 @@ const FrameHandle: FC<FrameHandleProps> = ({ side, isActive, onDragging, onDropp
   })
   return (
     <StyledFrameHandle side={side} isActive={isActive} onMouseDown={onMouseDown}>
-      <ChevronLeft />
+      <ChevronLeftIcon />
     </StyledFrameHandle>
   )
 }

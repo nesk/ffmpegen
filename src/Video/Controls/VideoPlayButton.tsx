@@ -1,7 +1,7 @@
 import { FC, useEffect, useState } from "react"
 import styled from "styled-components"
-import { ReactComponent as Pause } from "../../assets/pause.svg"
-import { ReactComponent as Play } from "../../assets/play.svg"
+import { ReactComponent as PauseIcon } from "../../assets/pause.svg"
+import { ReactComponent as PlayIcon } from "../../assets/play.svg"
 
 const StyledPlayButton = styled.button`
   display: flex;
@@ -41,7 +41,7 @@ export const VideoPlayButton: FC<VideoPlayButtonProps> = ({ onPlay, onPause, ...
 
   return (
     <StyledPlayButton onClick={handleClick}>
-      {isPaused ? <Play style={{ transform: "translateX(1px)" }} /> : <Pause />}
+      {isPaused ? <PlayIcon style={{ transform: "translateX(1px)" }} /> : <PauseIcon />}
     </StyledPlayButton>
   )
 }
