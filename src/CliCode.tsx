@@ -28,6 +28,17 @@ export const CliCode: FC<CliCodeProps> = ({ file, startTime, endTime }) => {
     setOutputExtension(extension)
   }, [file])
 
+  useEffect(() => {
+    const handleKeypress = (e: KeyboardEvent) => {
+      if (e.code !== "KeyR") return
+      const newName = prompt("New output name (without extension)")
+      if (newName) setOutputName(newName)
+    }
+
+    window.addEventListener("keypress", handleKeypress)
+    return () => window.removeEventListener("keypress", handleKeypress)
+  }, [])
+
   return (
     <StyledCode>
       ffmpeg -i '{input}' -ss {formatSecondsToFfmpegTime(startTime ?? 0)} -to {formatSecondsToFfmpegTime(endTime ?? 0)}{" "}
