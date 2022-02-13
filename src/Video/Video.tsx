@@ -26,8 +26,6 @@ interface VideoProps {
 export const Video: FC<VideoProps> = ({
   src,
   isPaused,
-  minTime,
-  maxTime,
   onLoaded,
   onDurationChange,
   onTimeChange,
@@ -37,8 +35,10 @@ export const Video: FC<VideoProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null)
   const { current: video } = videoRef
 
+  const minTime = roundToMillisecondsPrecision(props.minTime)
+  const maxTime = roundToMillisecondsPrecision(props.maxTime)
   const limitToMinMaxTime = (time: number) => Math.min(maxTime, Math.max(minTime, time))
-  const currentTime = limitToMinMaxTime(props.currentTime)
+  const currentTime = roundToMillisecondsPrecision(limitToMinMaxTime(props.currentTime))
   const [lastCurrentTime, setLastCurrentTime] = useState(0)
 
   // Play/pause the video when the `isPaused` prop changes
@@ -79,7 +79,7 @@ export const Video: FC<VideoProps> = ({
         video.currentTime = currentTime
       }
 
-      setLastCurrentTime(currentTime)
+      setLastCurrentTime(roundToMillisecondsPrecision(currentTime))
       onTimeChange(currentTime)
     }
   }
@@ -97,3 +97,11 @@ export const Video: FC<VideoProps> = ({
     />
   )
 }
+
+/**
+ * Rounds the provided value to the milliseconds precision.
+ *
+ * This avoids weird quirks where our original value has a
+ * precision higher than the one used by the <video> tag.
+ */
+export const roundToMillisecondsPrecision = (seconds: number) => Math.round(seconds * 1000) / 1000
