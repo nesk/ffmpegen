@@ -13,11 +13,11 @@ const Layout = styled.div`
   width: 800px;
 `
 
-interface AppProps {
+interface EditorProps {
   files: File[]
 }
 
-export const App: FC<AppProps> = ({ files }) => {
+export const Editor: FC<EditorProps> = ({ files }) => {
   const fileUrl = useMemo(() => URL.createObjectURL(files[0]), [files])
 
   const [isPaused, setIsPaused] = useState(true)
