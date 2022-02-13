@@ -1,4 +1,5 @@
-import { FC } from "react"
+import { useEffect } from "react"
+import { FC, useState } from "react"
 import styled from "styled-components"
 import { formatSecondsToFfmpegTime } from "./helpers"
 
@@ -17,11 +18,21 @@ interface CliCodeProps {
 
 export const CliCode: FC<CliCodeProps> = ({ file, startTime, endTime }) => {
   const input = file?.name ?? "<input>"
-  const output = file?.name ?? "<output>"
+  const [outputName, setOutputName] = useState("<output>")
+  const [outputExtension, setOutputExtension] = useState("")
+
+  useEffect(() => {
+    if (!file) return
+    const [extension, ...name] = file.name.split(".").reverse()
+    setOutputName(name.reverse().join(".") + " (edited)")
+    setOutputExtension(extension)
+  }, [file])
+
   return (
     <StyledCode>
       ffmpeg -i '{input}' -ss {formatSecondsToFfmpegTime(startTime ?? 0)} -to {formatSecondsToFfmpegTime(endTime ?? 0)}{" "}
-      -c copy '{output}'
+      -c copy '{outputName}
+      {outputExtension && `.${outputExtension}`}'
     </StyledCode>
   )
 }
