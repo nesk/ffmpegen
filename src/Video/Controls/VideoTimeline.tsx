@@ -104,6 +104,7 @@ export interface VideoTimelineProps {
   readonly duration: number
   readonly minTime: number
   readonly maxTime: number
+  readonly forceTooltipVisibility: boolean
   onSeeking(currentTime: number): void
   onSeeked(): void
 }
@@ -113,6 +114,7 @@ export const VideoTimeline: FC<VideoTimelineProps> = ({
   minTime,
   maxTime,
   duration,
+  forceTooltipVisibility,
   onSeeking,
   onSeeked,
 }) => {
@@ -147,7 +149,7 @@ export const VideoTimeline: FC<VideoTimelineProps> = ({
 
   return (
     <VideoProgress ref={elementRef} onMouseDown={onMouseDown}>
-      <VideoProgressCursor isSeeking={isSeeking} currentTime={finalTime} duration={duration}>
+      <VideoProgressCursor isSeeking={isSeeking || forceTooltipVisibility} currentTime={finalTime} duration={duration}>
         {formatSecondsToFfmpegTime(finalTime)}
       </VideoProgressCursor>
     </VideoProgress>

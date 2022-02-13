@@ -95,13 +95,14 @@ const FrameHandle: FC<FrameHandleProps> = ({ side, isActive, onDragging, onDropp
 
 export interface VideoCutterProps {
   readonly duration: number
-  onMinTime(time: number): void
-  onMaxTime(time: number): void
+  onMinSeeking(time: number): void
+  onMaxSeeking(time: number): void
+  onSeeked(): void
 }
 type Offset = { visual: number; raw: number }
 type OffsetUpdater = (prevState: Offset) => Offset
 
-export const VideoCutter: FC<VideoCutterProps> = ({ duration, children, onMinTime, onMaxTime }) => {
+export const VideoCutter: FC<VideoCutterProps> = ({ duration, children, onMinSeeking, onMaxSeeking, onSeeked }) => {
   const containerRef = useRef(null)
   const frameRef = useRef(null)
 
@@ -131,20 +132,25 @@ export const VideoCutter: FC<VideoCutterProps> = ({ duration, children, onMinTim
     })
   }
 
-  const generateRawOffsetResetter = (setState: (updater: OffsetUpdater) => void) => {
-    return () => setState(({ visual }: Offset) => ({ visual, raw: visual }))
+  const createRawOffsetResetter = (setState: (updater: OffsetUpdater) => void) => {
+    return () => {
+      setState(({ visual }: Offset) => ({ visual, raw: visual }))
+      onSeeked()
+    }
   }
 
-  useEffect(() => {
-    onMaxTime(convertOffsetToTime(containerRef.current, frameRef.current, Side.End, duration, endOffset))
-  }, [endOffset, duration]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    onMinTime(convertOffsetToTime(containerRef.current, frameRef.current, Side.Start, duration, startOffset))
-  }, [startOffset, duration]) // eslint-disable-line react-hooks/exhaustive-deps
+  // Use effects to execute the seeking events. We can't execute them in the `set(Start|End)OffsetWithMovement`
+  // functions because React will log the following warning: https://reactjs.org/link/setstate-in-render
+  const useSeekingEffect = (onSeeking: (seconds: number) => void, side: Side, offset: Offset) => {
+    useEffect(() => {
+      if (offset.raw === 0) return
+      onSeeking(convertOffsetToTime(containerRef.current, frameRef.current, side, duration, offset))
+    }, [offset.visual, duration]) // eslint-disable-line react-hooks/exhaustive-deps
+  }
+  useSeekingEffect(onMaxSeeking, Side.End, endOffset)
+  useSeekingEffect(onMinSeeking, Side.Start, startOffset)
 
   const isActive = startOffset.visual + endOffset.visual > 0
-
   return (
     <Container ref={containerRef}>
       <Frame ref={frameRef} startOffset={startOffset.visual} endOffset={endOffset.visual}>
@@ -152,13 +158,13 @@ export const VideoCutter: FC<VideoCutterProps> = ({ duration, children, onMinTim
           side={Side.Start}
           isActive={isActive}
           onDragging={setStartOffsetWithMovement}
-          onDropped={generateRawOffsetResetter(setStartOffset)}
+          onDropped={createRawOffsetResetter(setStartOffset)}
         />
         <FrameHandle
           side={Side.End}
           isActive={isActive}
           onDragging={setEndOffsetWithMovement}
-          onDropped={generateRawOffsetResetter(setEndOffset)}
+          onDropped={createRawOffsetResetter(setEndOffset)}
         />
       </Frame>
       {children}

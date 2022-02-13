@@ -25,12 +25,14 @@ export const Editor: FC<EditorProps> = ({ files }) => {
   const [minTime, setMinTime] = useState(0)
   const [maxTime, setMaxTime] = useState(Infinity)
   const [duration, setDuration] = useState(0)
+  const [isCutting, setIsCutting] = useState(false)
   const [wasPausedBeforeSeek, setWasPausedBeforeSeek] = useState<boolean | null>(null)
 
   const onMinMaxTime = (setState: React.Dispatch<React.SetStateAction<number>>) => {
     return (timeLimit: number) => {
       setState(timeLimit)
       setCurrentTime(timeLimit)
+      setIsCutting(true)
       setIsPaused(true)
     }
   }
@@ -59,19 +61,28 @@ export const Editor: FC<EditorProps> = ({ files }) => {
         minTime={minTime}
         maxTime={maxTime}
         onLoaded={() => {}}
-        onDurationChange={setDuration}
+        onDurationChange={duration => {
+          setDuration(duration)
+          setMaxTime(duration)
+        }}
         onTimeChange={setCurrentTime}
         onPauseChange={setIsPaused}
       />
 
       <VideoControls>
         <VideoPlayButton isPaused={isPaused} onPlay={() => setIsPaused(false)} onPause={() => setIsPaused(true)} />
-        <VideoCutter duration={duration} onMinTime={onMinMaxTime(setMinTime)} onMaxTime={onMinMaxTime(setMaxTime)}>
+        <VideoCutter
+          duration={duration}
+          onMinSeeking={onMinMaxTime(setMinTime)}
+          onMaxSeeking={onMinMaxTime(setMaxTime)}
+          onSeeked={() => setIsCutting(false)}
+        >
           <VideoTimeline
             duration={duration}
             currentTime={currentTime}
             minTime={minTime}
             maxTime={maxTime}
+            forceTooltipVisibility={isCutting}
             onSeeking={onSeeking}
             onSeeked={onSeeked}
           />
