@@ -20,8 +20,8 @@ export const CliCode: FC<CliCodeProps> = ({ file, startTime, endTime }) => {
   const output = file?.name ?? "<output>"
   return (
     <StyledCode>
-      ffmpeg -i {input} -ss {formatSecondsToFfmpegTime(startTime ?? 0)} -to {formatSecondsToFfmpegTime(endTime ?? 0)} -c
-      copy {output}
+      ffmpeg -i '{input}' -ss {formatSecondsToFfmpegTime(startTime ?? 0)} -to {formatSecondsToFfmpegTime(endTime ?? 0)}{" "}
+      -c copy '{output}'
     </StyledCode>
   )
 }
