@@ -34,7 +34,7 @@ const StyledVideoProgressCursor = styled.div.attrs<VideoProgressCursorProps>(({ 
 `
 
 const VideoProgressTooltip = styled.div<VideoProgressCursorProps>`
-  position: absolute;
+  position: fixed;
   transform: translate(-50%, calc(-100% - 10px));
   border-radius: 6px;
   padding: 8px;
