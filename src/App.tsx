@@ -1,4 +1,5 @@
 import { FC, useState } from "react"
+import styled from "styled-components"
 import { CliCode } from "./CliCode"
 import { Video } from "./Video/Video"
 import { VideoCutter } from "./Video/Controls/VideoCutter"
@@ -6,6 +7,11 @@ import { VideoTimeline } from "./Video/Controls/VideoTimeline"
 import { VideoPlayButton } from "./Video/Controls/VideoPlayButton"
 import { VideoControls } from "./Video/Controls/VideoControls"
 import { useMemo } from "react"
+
+const Layout = styled.div`
+  margin: auto;
+  width: 800px;
+`
 
 interface AppProps {
   files: File[]
@@ -45,7 +51,7 @@ export const App: FC<AppProps> = ({ files }) => {
   }
 
   return (
-    <>
+    <Layout>
       <Video
         src={fileUrl}
         isPaused={isPaused}
@@ -73,6 +79,6 @@ export const App: FC<AppProps> = ({ files }) => {
       </VideoControls>
 
       <CliCode file={files[0]} startTime={minTime} endTime={maxTime} />
-    </>
+    </Layout>
   )
 }
