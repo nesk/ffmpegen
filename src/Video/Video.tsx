@@ -33,7 +33,6 @@ export const Video: FC<VideoProps> = ({
   ...props
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const { current: video } = videoRef
 
   const minTime = roundToMillisecondsPrecision(props.minTime)
   const maxTime = roundToMillisecondsPrecision(props.maxTime)
@@ -43,6 +42,7 @@ export const Video: FC<VideoProps> = ({
 
   // Play/pause the video when the `isPaused` prop changes
   useEffect(() => {
+    const { current: video } = videoRef
     if (video) {
       if (isPaused) {
         video.pause()
@@ -53,19 +53,21 @@ export const Video: FC<VideoProps> = ({
         video.play()
       }
     }
-  }, [isPaused, minTime, maxTime, video])
+  }, [isPaused, minTime, maxTime, videoRef])
 
   // Change the current time of the video when the `currentTime` prop changes
   useEffect(() => {
+    const { current: video } = videoRef
     // We compare the currentTime to the previous one we emitted through `onTimeChange`, otherwise
     // it would create a stuttering animation when playing the video.
     if (video && currentTime !== lastCurrentTime) {
       video.currentTime = currentTime
     }
-  }, [currentTime, lastCurrentTime, video])
+  }, [currentTime, lastCurrentTime, videoRef])
 
   // Handle everything when the current time changes
   const timeUpdateHandler = () => {
+    const { current: video } = videoRef
     if (video) {
       const currentTime = limitToMinMaxTime(video.currentTime)
 
@@ -90,7 +92,7 @@ export const Video: FC<VideoProps> = ({
       src={src}
       disablePictureInPicture={true}
       onCanPlayThrough={() => onLoaded()}
-      onLoadedMetadata={() => video && onDurationChange(video.duration)}
+      onLoadedMetadata={() => videoRef.current && onDurationChange(videoRef.current.duration)}
       onTimeUpdate={timeUpdateHandler}
       onPlay={() => onPauseChange(false)}
       onPause={() => onPauseChange(true)}
