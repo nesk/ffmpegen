@@ -3,6 +3,7 @@ import styled from "styled-components"
 
 const StyledVideo = styled.video`
   display: block;
+  margin: 30px 0;
   width: 100%;
   background: #565656;
 `
