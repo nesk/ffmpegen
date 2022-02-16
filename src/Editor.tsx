@@ -9,8 +9,11 @@ import { VideoControls } from "./Video/Controls/VideoControls"
 import { useMemo } from "react"
 
 const Layout = styled.div`
-  margin: auto;
-  width: 800px;
+  display: grid;
+  grid-template-columns: [video-start] auto [controls-start] 700px [controls-end] auto [video-end cli-start] 450px [cli-end];
+  grid-template-rows: [cli-start] 30px auto [video-start] auto [video-end] 50px [controls-start] auto [controls-end] auto 30px [cli-end];
+  width: 100vw;
+  height: 100vh;
 `
 
 interface EditorProps {

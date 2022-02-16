@@ -3,11 +3,18 @@ import { FC, useState } from "react"
 import styled from "styled-components"
 import { formatSecondsToFfmpegTime } from "./helpers"
 
-const StyledCode = styled.code`
-  display: block;
-  margin: 30px;
-  text-align: center;
-  font-size: 15px;
+const Layout = styled.section`
+  grid-area: cli;
+  border-left: 1px solid #272727;
+  background: #141414;
+  line-height: 2;
+  font-size: 18px;
+  overflow: auto;
+`
+
+const Code = styled.pre`
+  width: min-content;
+  padding: 30px;
 `
 
 interface CliCodeProps {
@@ -40,10 +47,20 @@ export const CliCode: FC<CliCodeProps> = ({ file, startTime, endTime }) => {
   }, [])
 
   return (
-    <StyledCode>
-      ffmpeg -i '{input}' -ss {formatSecondsToFfmpegTime(startTime ?? 0)} -to {formatSecondsToFfmpegTime(endTime ?? 0)}{" "}
-      -c copy '{outputName}
-      {outputExtension && `.${outputExtension}`}'
-    </StyledCode>
+    <Layout>
+      <Code>
+        ffmpeg \
+        <br />
+        {"  "}-i '{input}' \
+        <br />
+        {"  "}-ss {formatSecondsToFfmpegTime(startTime ?? 0)} \
+        <br />
+        {"  "}-to {formatSecondsToFfmpegTime(endTime ?? 0)} \<br />
+        {"  "}-c copy \
+        <br />
+        {"  "}'{outputName}
+        {outputExtension && `.${outputExtension}`}'
+      </Code>
+    </Layout>
   )
 }

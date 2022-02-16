@@ -2,10 +2,11 @@ import { FC, useEffect, useRef, useState } from "react"
 import styled from "styled-components"
 
 const StyledVideo = styled.video`
-  display: block;
-  margin: 30px 0;
-  width: 100%;
-  background: #565656;
+  grid-area: video;
+  justify-self: center;
+  align-self: center;
+  max-width: 100%;
+  max-height: 100%;
 `
 
 interface VideoProps {
