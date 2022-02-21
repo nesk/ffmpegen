@@ -1,7 +1,7 @@
-import { useEffect } from "react"
+import { useCallback, useEffect } from "react"
 import { FC, useState } from "react"
 import styled from "styled-components"
-import { formatSecondsToFfmpegTime } from "./helpers"
+import { formatSecondsToFfmpegTime, isMacos } from "./helpers"
 import { ReactComponent as CopyIcon } from "./assets/copy.svg"
 import { ReactComponent as CheckIcon } from "./assets/check.svg"
 
@@ -116,7 +116,20 @@ export const CliCode: FC<CliCodeProps> = ({ file, startTime, endTime }) => {
     .trim() // trim all the spaces around the code
     .replace(/ {2,}/g, "  ") // change the indentation for 2 spaces only
 
-  const copyCliCode = () => navigator.clipboard.writeText(cliCode)
+  const copyCliCode = useCallback(() => navigator.clipboard.writeText(cliCode), [cliCode])
+
+  // Allow to copy the code by pressing "cmd+C" or "ctrl+C"
+  useEffect(() => {
+    const handleKeydown = (e: KeyboardEvent) => {
+      const modifierPressed = isMacos(navigator.userAgent) ? e.metaKey : e.ctrlKey
+      if (modifierPressed && e.code === "KeyC") {
+        copyCliCode()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeydown)
+    return () => window.removeEventListener("keydown", handleKeydown)
+  }, [copyCliCode])
 
   return (
     <Layout>

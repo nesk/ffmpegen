@@ -1,3 +1,5 @@
+export const isMacos = (userAgent: string) => userAgent.includes("Macintosh")
+
 export const formatSecondsToFfmpegTime = (seconds: number) => {
   const h = Math.floor(seconds / 3600)
     .toString()
