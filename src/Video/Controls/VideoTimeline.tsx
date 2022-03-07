@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, FC } from "react"
 import { createPortal } from "react-dom"
 import styled from "styled-components"
-import { formatSecondsToFfmpegTime } from "../../helpers"
+import { encodeTimeToString } from "../../Command/Encoder/TimeEncoder"
 import { useMouseMoveEvent } from "../../MouseMoveEvents"
 
 const VideoProgress = styled.div`
@@ -150,7 +150,7 @@ export const VideoTimeline: FC<VideoTimelineProps> = ({
   return (
     <VideoProgress ref={elementRef} onMouseDown={onMouseDown}>
       <VideoProgressCursor isSeeking={isSeeking || forceTooltipVisibility} currentTime={finalTime} duration={duration}>
-        {formatSecondsToFfmpegTime(finalTime)}
+        {encodeTimeToString(finalTime)}
       </VideoProgressCursor>
     </VideoProgress>
   )

@@ -1,9 +1,10 @@
 import { useCallback, useEffect } from "react"
 import { FC, useState } from "react"
 import styled from "styled-components"
-import { formatSecondsToFfmpegTime, isMacos } from "./helpers"
+import { isMacos } from "./helpers"
 import { ReactComponent as CopyIcon } from "./assets/copy.svg"
 import { ReactComponent as CheckIcon } from "./assets/check.svg"
+import { encodeTimeToString } from "./Command/Encoder/TimeEncoder"
 
 const Layout = styled.section`
   grid-area: cli;
@@ -108,8 +109,8 @@ export const CliCode: FC<CliCodeProps> = ({ file, startTime, endTime }) => {
   const cliCode = `
     ffmpeg \\
       -i '${input}' \\
-      -ss ${formatSecondsToFfmpegTime(startTime ?? 0)} \\
-      -to ${formatSecondsToFfmpegTime(endTime ?? 0)} \\
+      -ss ${encodeTimeToString(startTime ?? 0)} \\
+      -to ${encodeTimeToString(endTime ?? 0)} \\
       -c copy \\
       '${outputName}${outputExtension && `.${outputExtension}`}'
   `
